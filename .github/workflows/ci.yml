@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  lint-api:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: phase2-web/api
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      
+      - name: Install dependencies
+        run: npm install
+      
+      - name: Validate Prisma schema
+        run: npx prisma validate
+      
+      - name: Generate Prisma client
+        run: npx prisma generate
+
+  lint-admin-web:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: phase2-web/admin-web
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      
+      - name: Install dependencies
+        run: npm install
+      
+      - name: Build
+        run: npm run build
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:3000/api
+
