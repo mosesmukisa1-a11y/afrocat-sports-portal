@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register - Afrocat Sports Club</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .register-container {
+      background: white;
+      border-radius: 15px;
+      padding: 30px;
+      max-width: 600px;
+      margin: 0 auto;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+    
+    h1 {
+      text-align: center;
+      color: #667eea;
+      margin-bottom: 10px;
+    }
+    
+    .subtitle {
+      text-align: center;
+      color: #666;
+      margin-bottom: 30px;
+      font-size: 14px;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #333;
+      font-weight: 500;
+    }
+    
+    label.required::after {
+      content: ' *';
+      color: #c33;
+    }
+    
+    input, select, textarea {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: border-color 0.3s;
+      font-family: inherit;
+    }
+    
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+    
+    .checkbox-group {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    
+    .checkbox-group input[type="checkbox"] {
+      width: auto;
+      margin-top: 5px;
+    }
+    
+    .photo-preview {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-top: 10px;
+      border: 3px solid #667eea;
+      display: none;
+    }
+    
+    .btn {
+      width: 100%;
+      padding: 14px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s;
+      margin-top: 10px;
+    }
+    
+    .btn:hover {
+      background: #5568d3;
+    }
+    
+    .btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+    
+    .error {
+      background: #fee;
+      color: #c33;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: none;
+    }
+    
+    .success {
+      background: #efe;
+      color: #3c3;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: none;
+    }
+    
+    .back-link {
+      text-align: center;
+      margin-top: 20px;
+    }
+    
+    .back-link a {
+      color: #667eea;
+      text-decoration: none;
+    }
+    
+    @media (max-width: 768px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="register-container">
+    <h1>Afrocat Sports Club</h1>
+    <p class="subtitle">Join our team - Registration</p>
+    
+    <div id="error" class="error"></div>
+    <div id="success" class="success"></div>
+    
+    <form id="registerForm">
+      <div class="form-group">
+        <label for="name" class="required">Full Name</label>
+        <input type="text" id="name" name="name" required>
+      </div>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label for="email" class="required">Email</label>
+          <input type="email" id="email" name="email" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="phone" class="required">Phone</label>
+          <input type="tel" id="phone" name="phone" required>
+        </div>
+      </div>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label for="gender" class="required">Gender</label>
+          <select id="gender" name="gender" required>
+            <option value="">Select...</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="dateOfBirth" class="required">Date of Birth</label>
+          <input type="date" id="dateOfBirth" name="dateOfBirth" required>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="nationality" class="required">Nationality</label>
+        <input type="text" id="nationality" name="nationality" required>
+      </div>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label for="role" class="required">Role</label>
+          <select id="role" name="role" required>
+            <option value="">Select...</option>
+            <option value="Player">Player</option>
+            <option value="Coach">Coach</option>
+            <option value="Manager">Manager</option>
+            <option value="Stats">Stats</option>
+            <option value="Doctor">Doctor</option>
+          </select>
+        </div>
+        
+        <div class="form-group" id="teamGroup" style="display: none;">
+          <label for="teamName">Team Name</label>
+          <input type="text" id="teamName" name="teamName">
+        </div>
+      </div>
+      
+      <div class="form-row" id="jerseyGroup" style="display: none;">
+        <div class="form-group">
+          <label for="jerseyNumber">Jersey Number</label>
+          <input type="number" id="jerseyNumber" name="jerseyNumber" min="1" max="99">
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="photo" class="required">Profile Photo</label>
+        <input type="file" id="photo" name="photo" accept="image/*" required>
+        <img id="photoPreview" class="photo-preview" alt="Preview">
+      </div>
+      
+      <div class="form-group">
+        <label for="bio">Bio (Optional)</label>
+        <textarea id="bio" name="bio" rows="3"></textarea>
+      </div>
+      
+      <div class="form-group">
+        <div class="checkbox-group">
+          <input type="checkbox" id="termsAccepted" name="termsAccepted" required>
+          <label for="termsAccepted">I accept the Terms & Conditions <span style="color: #c33;">*</span></label>
+        </div>
+      </div>
+      
+      <button type="submit" class="btn" id="submitBtn">Register</button>
+    </form>
+    
+    <div class="back-link">
+      <a href="?page=landing">← Back to Home</a> | 
+      <a href="?page=login">Login</a>
+    </div>
+  </div>
+  
+  <script>
+    document.getElementById('role').addEventListener('change', function() {
+      const role = this.value;
+      const teamGroup = document.getElementById('teamGroup');
+      const jerseyGroup = document.getElementById('jerseyGroup');
+      
+      if (role === 'Player') {
+        teamGroup.style.display = 'block';
+        jerseyGroup.style.display = 'grid';
+      } else {
+        teamGroup.style.display = 'none';
+        jerseyGroup.style.display = 'none';
+      }
+    });
+    
+    document.getElementById('photo').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const preview = document.getElementById('photoPreview');
+          preview.src = e.target.result;
+          preview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+    
+    document.getElementById('registerForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const errorDiv = document.getElementById('error');
+      const successDiv = document.getElementById('success');
+      const submitBtn = document.getElementById('submitBtn');
+      
+      errorDiv.style.display = 'none';
+      successDiv.style.display = 'none';
+      
+      const formData = {
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+        gender: document.getElementById('gender').value,
+        dateOfBirth: document.getElementById('dateOfBirth').value,
+        nationality: document.getElementById('nationality').value,
+        role: document.getElementById('role').value,
+        teamName: document.getElementById('teamName').value,
+        jerseyNumber: document.getElementById('jerseyNumber').value,
+        bio: document.getElementById('bio').value,
+        termsAccepted: document.getElementById('termsAccepted').checked
+      };
+      
+      const photoInput = document.getElementById('photo');
+      const photoFile = photoInput.files[0];
+      
+      if (photoFile) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          formData.photo = e.target.result;
+          submitRegistration(formData);
+        };
+        reader.readAsDataURL(photoFile);
+      } else {
+        errorDiv.textContent = 'Please upload a profile photo';
+        errorDiv.style.display = 'block';
+      }
+    });
+    
+    function submitRegistration(formData) {
+      const submitBtn = document.getElementById('submitBtn');
+      const errorDiv = document.getElementById('error');
+      const successDiv = document.getElementById('success');
+      
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Registering...';
+      
+      google.script.run
+        .withSuccessHandler(function(result) {
+          successDiv.innerHTML = 'Registration successful!<br>Member ID: ' + result.memberId + '<br>Your registration is pending approval. You will receive an email once approved.';
+          successDiv.style.display = 'block';
+          document.getElementById('registerForm').reset();
+          document.getElementById('photoPreview').style.display = 'none';
+          
+          setTimeout(function() {
+            window.location.href = '?page=landing';
+          }, 3000);
+        })
+        .withFailureHandler(function(error) {
+          errorDiv.textContent = error.message || 'Registration failed. Please try again.';
+          errorDiv.style.display = 'block';
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Register';
+        })
+        .registerMember(formData);
+    }
+  </script>
+</body>
+</html>
+

@@ -1,0 +1,296 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  PLAYER
+  COACH
+  MANAGER
+  STATS
+  DOCTOR
+  ADMIN
+}
+
+enum MemberStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  EXCUSED
+}
+
+enum TransactionType {
+  INCOME
+  EXPENSE
+}
+
+enum TransactionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum InjuryStatus {
+  ACTIVE
+  RECOVERING
+  RESOLVED
+}
+
+model User {
+  id            String        @id @default(uuid())
+  memberId      String        @unique
+  email         String        @unique
+  name          String
+  phone         String?
+  gender        String?
+  dateOfBirth   DateTime?
+  nationality   String?
+  role          Role          @default(PLAYER)
+  status        MemberStatus  @default(PENDING)
+  avatarUrl     String?
+  bio           String?
+  termsAccepted Boolean       @default(false)
+  rejectionReason String?
+  approvedBy    String?
+  approvedAt    DateTime?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  // Relations
+  memberships   Membership[]
+  playerStats   PlayerStat[]
+  attendances   Attendance[]
+  injuries      Injury[]
+  transactions  FinanceTransaction[]
+  awards        Award[]
+  createdMatches Match[]      @relation("MatchCreator")
+  auditLogs     AuditLog[]
+
+  @@index([email])
+  @@index([status])
+  @@index([role])
+}
+
+model Team {
+  id          String       @id @default(uuid())
+  name        String       @unique
+  coachId     String?
+  coach       User?        @relation("TeamCoach", fields: [coachId], references: [id])
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  // Relations
+  memberships Membership[]
+  matches     Match[]
+  attendances Attendance[]
+
+  @@index([coachId])
+}
+
+model Membership {
+  id           String   @id @default(uuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  teamId       String
+  team         Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  jerseyNumber Int?
+  joinedAt     DateTime @default(now())
+
+  @@unique([userId, teamId])
+  @@index([userId])
+  @@index([teamId])
+}
+
+model Match {
+  id          String      @id @default(uuid())
+  date        DateTime
+  opponent    String
+  venue       String?
+  result      String?
+  teamId      String
+  team        Team        @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  createdById String
+  createdBy   User        @relation("MatchCreator", fields: [createdById], references: [id])
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  // Relations
+  sets        MatchSet[]
+  playerStats PlayerStat[]
+
+  @@index([teamId])
+  @@index([date])
+}
+
+model MatchSet {
+  id            String  @id @default(uuid())
+  matchId       String
+  match         Match   @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  setNumber     Int
+  ourScore      Int
+  opponentScore Int
+
+  @@unique([matchId, setNumber])
+  @@index([matchId])
+}
+
+model PlayerStat {
+  id            String  @id @default(uuid())
+  matchId       String
+  match         Match   @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  playerId      String
+  player        User    @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  kills         Int     @default(0)
+  blocks        Int     @default(0)
+  digs          Int     @default(0)
+  aces          Int     @default(0)
+  errors        Int     @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([matchId, playerId])
+  @@index([playerId])
+  @@index([matchId])
+}
+
+model Attendance {
+  id        String           @id @default(uuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  teamId    String?
+  team      Team?            @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  date      DateTime
+  type      String
+  status    AttendanceStatus @default(PRESENT)
+  notes     String?
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  @@index([userId])
+  @@index([teamId])
+  @@index([date])
+}
+
+model Injury {
+  id           String       @id @default(uuid())
+  userId       String
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type         String
+  date         DateTime
+  severity     String?
+  status       InjuryStatus @default(ACTIVE)
+  restrictions String?
+  notes        String?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  @@index([userId])
+  @@index([status])
+}
+
+model FinanceTransaction {
+  id          String            @id @default(uuid())
+  type        TransactionType
+  amount      Float
+  description String
+  date        DateTime
+  status      TransactionStatus @default(PENDING)
+  receiptUrl  String?
+  createdById String
+  createdBy   User              @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  approvedById String?
+  approvedAt  DateTime?
+  notes       String?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  @@index([createdById])
+  @@index([type])
+  @@index([status])
+  @@index([date])
+}
+
+model Award {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title       String
+  season      String
+  description String?
+  date        DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+  @@index([season])
+}
+
+model TrainingFocus {
+  id          String   @id @default(uuid())
+  teamId      String?
+  title       String
+  description String?
+  weekStart   DateTime
+  weekEnd     DateTime
+  drills      String?
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([teamId])
+  @@index([weekStart])
+}
+
+model OtpToken {
+  id        String   @id @default(uuid())
+  email     String
+  code      String
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([email])
+  @@index([code])
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([token])
+}
+
+model AuditLog {
+  id          String   @id @default(uuid())
+  timestamp   DateTime @default(now())
+  actorId     String?
+  actor       User?    @relation(fields: [actorId], references: [id], onDelete: SetNull)
+  actorEmail  String
+  action      String
+  targetEmail String?
+  details     String?
+  ipAddress   String?
+  userAgent   String?
+
+  @@index([actorEmail])
+  @@index([action])
+  @@index([timestamp])
+}
+
